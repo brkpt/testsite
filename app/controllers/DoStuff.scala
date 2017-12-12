@@ -29,13 +29,13 @@ object City {
 class DoStuff @Inject() (db: Database, cc: ControllerComponents) extends AbstractController(cc){
   def main() = Action { implicit request: Request[AnyContent] =>
     implicit val connection: Connection  = db.getConnection()
+    Class.forName("oracle.jdbc.driver.OracleDriver")
     try {
-      Class.forName("oracle.jdbc.driver.OracleDriver");
       val result = sql"select * from city".asList[City]
       Logger.debug(s"MRSMITH - ${result}")
     } catch {
       case ex: ClassNotFoundException =>
-        println("Error: unable to load driver class!");
+        println("Error: unable to load driver class!")
     } finally {
       connection.close()
     }
