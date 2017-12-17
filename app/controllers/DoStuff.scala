@@ -1,13 +1,11 @@
 package controllers
 
 import javax.inject._
-import play.api._
 import play.api.mvc._
 import play.api.db._
 import play.api.Logger
 import com.lucidchart.relate._
 import java.sql.Connection
-import java.sql.DriverManager
 
 case class City(id: Int, name: String, countryCode: String, district: String, population: Int)
 
@@ -40,6 +38,6 @@ class DoStuff @Inject() (db: Database, cc: ControllerComponents) extends Abstrac
       connection.close()
     }
 
-    Ok("Hello world")
+    Ok(views.html.dostuff("My Title", "Matt", 48))
   }
 }
