@@ -1,4 +1,4 @@
-@(userForm: Form[UserLoginData])(implicit messages: play.api.i18n.Messages)
+@(userForm: Form[UserLoginData])(implicit request: RequestHeader, messages: Messages)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,6 +9,7 @@
   @helper.form(routes.UserLogin.login) {
     @helper.inputText(userForm("username"))
     @helper.inputPassword(userForm("password"))
+    @helper.CSRF.formField
     <button type="submit">Login</button>
   }
 </head>

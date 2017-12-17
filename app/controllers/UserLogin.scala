@@ -5,7 +5,8 @@ import javax.inject._
 import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
+import play.api.Logger
 
 case class UserLoginData(username: String, password: String)
 
@@ -14,7 +15,7 @@ class UserLogin @Inject() (cc: ControllerComponents) extends AbstractController(
 
   val userLogin: Form[UserLoginData] = Form(
     mapping(
-      "name" -> text,
+      "username" -> text,
       "password" -> text
     )(UserLoginData.apply)(UserLoginData.unapply)
   )
@@ -24,12 +25,13 @@ class UserLogin @Inject() (cc: ControllerComponents) extends AbstractController(
   }
 
   def login() = Action { implicit request =>
+    Logger.trace("MRSMITH - login")
     userLogin.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest("Error")
+        BadRequest("This is my error")
       },
       userData => {
-        Ok("Done")
+        Ok(s"User: ${userData.username}<p>Password: ${userData.password}")
         // Redirect(routes.Application.home(id))
       }
     )
