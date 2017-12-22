@@ -7,11 +7,11 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.12.3"
 
-libraryDependencies += guice
-libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
-libraryDependencies += "com.lucidchart" %% "relate" % "2.1.1"
-libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.21"
-libraryDependencies += javaJdbc
+libraryDependencies ++= Seq(guice,javaJdbc,ws,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test,
+  "com.lucidchart" %% "relate" % "2.1.1",
+  "mysql" % "mysql-connector-java" % "5.1.21"
+)
 
 resolvers += "Sonatype release repository" at "https://oss.sonatype.org/content/repositories/releases/"
 
