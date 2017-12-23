@@ -1,11 +1,15 @@
 goog.provide('Shape');
 
+// ****************************************************************************
 // Represents a renderable object
+// ****************************************************************************
 function Shape() {
     this.modelViewMatrix = mat4.create();
     this.squareRotation = 0.0;
 }
 
+// ****************************************************************************
+// ****************************************************************************
 Shape.prototype.load = function(gl) {
     // Create a buffer for the square's positions.
     this.positionBuffer = gl.createBuffer();
@@ -40,6 +44,8 @@ Shape.prototype.load = function(gl) {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 }
 
+// ****************************************************************************
+// ****************************************************************************
 Shape.prototype.render = function(gl, programInfo, projectionMatrix, deltaTime) {
     // Reset modelViewMatrix
     mat4.identity(this.modelViewMatrix);

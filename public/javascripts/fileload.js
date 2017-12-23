@@ -1,10 +1,14 @@
 goog.provide('FileLoader');
 
+// ****************************************************************************
 // Loads a file and calls back to the caller
+// ****************************************************************************
 function FileLoader(instance) {
     this.instance=instance;
 }
 
+// ****************************************************************************
+// ****************************************************************************
 FileLoader.prototype.load = function(url, callback) {
     this.url = url;
     this.callback = callback;

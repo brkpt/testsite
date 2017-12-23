@@ -5,9 +5,13 @@ goog.require('Shape');
 import {FileLoader} from './fileload.js';
 import {Shape} from './shape.js';
 
+// ****************************************************************************
+// ****************************************************************************
 var helixCallbacks = {
 }
 
+// ****************************************************************************
+// ****************************************************************************
 function Helix(glContext) {
   this.gl = glContext;
   this.fieldOfView = 45 * Math.PI / 180;   // in radians
@@ -18,7 +22,6 @@ function Helix(glContext) {
   this.viewMatrix = mat4.create();
   this.lastFrameTime = 0;
   this.shapes = [];
-
 
   // If we don't have a GL context, give up now
   if (!this.gl) {
@@ -31,16 +34,8 @@ function Helix(glContext) {
   this.shadersPromise = Promise.all([this.vspromise, this.fspromise]);
 }
 
-Helix.prototype.render = function(now) {
-  now *= 0.001;  // convert to seconds
-  const deltaTime = now - this.lastFrameTime;
-  this.lastFrameTime = now;
-
-  this.drawScene(this.gl, this.programInfo, this.buffers, deltaTime);
-
-  window.requestAnimationFrame(helixCallbacks.render.bind(helixCallbacks));
-}
-
+// ****************************************************************************
+// ****************************************************************************
 Helix.prototype.init = function() {
   // Save instance
   helixCallbacks.instance = this;
@@ -84,17 +79,30 @@ Helix.prototype.init = function() {
 
 }
 
+// ****************************************************************************
 // Load objects to render
+// ****************************************************************************
 Helix.prototype.loadObjects = function() {
     var shape = new Shape();
     shape.load(this.gl);
     this.shapes.push(shape);
 }
 
+// ****************************************************************************
+// ****************************************************************************
+Helix.prototype.render = function(now) {
+  now *= 0.001;  // convert to seconds
+  const deltaTime = now - this.lastFrameTime;
+  this.lastFrameTime = now;
 
-//
+  this.drawScene(this.gl, this.programInfo, this.buffers, deltaTime);
+
+  window.requestAnimationFrame(helixCallbacks.render.bind(helixCallbacks));
+}
+
+// ****************************************************************************
 // Draw the scene.
-//
+// ****************************************************************************
 Helix.prototype.drawScene = function(gl, programInfo, buffers, deltaTime) {
   this.deltaTime = deltaTime;
   gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
@@ -118,9 +126,9 @@ Helix.prototype.drawScene = function(gl, programInfo, buffers, deltaTime) {
   }.bind(this));
 }
 
-//
+// ****************************************************************************
 // Initialize a shader program, so WebGL knows how to draw our data
-//
+// ****************************************************************************
 Helix.prototype.initShaderProgram = function(gl, vsSource, fsSource) {
   const vertexShader = this.loadShader(gl, gl.VERTEX_SHADER, vsSource);
   const fragmentShader = this.loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
@@ -140,10 +148,10 @@ Helix.prototype.initShaderProgram = function(gl, vsSource, fsSource) {
   return shaderProgram;
 }
 
-//
+// ****************************************************************************
 // creates a shader of the given type, uploads the source and
 // compiles it.
-//
+// ****************************************************************************
 Helix.prototype.loadShader = function(gl, type, source) {
   const shader = gl.createShader(type);
 
