@@ -1,6 +1,6 @@
 goog.require('goog.dom');
 
-console.log("sayhi");
+//console.log("sayhi");
 function sayHi() {
   var newHeader = goog.dom.createDom('h1', {'style': 'background-color:#EEE'},
     'Hello world!');

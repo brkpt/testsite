@@ -1,4 +1,7 @@
+import {FileLoader} from './fileload.js';
+
 goog.provide('Helix');
+goog.require('FileLoader');
 
 var helixCallbacks = {
 }
@@ -13,17 +16,19 @@ function Helix(glContext) {
     return;
   }
 
-  this.vspromise = $.ajax({
-    url: 'assets/datafiles/vsource.dat'
-  });
+  // this.vspromise = $.ajax({
+  //   url: 'assets/datafiles/vsource.dat'
+  // });
 
-  this.fspromise = $.ajax({
-    url: 'assets/datafiles/fsource.dat'
-  });
+  function TestCallback(url, result) {
+    console.log('callback hit for ' + url);
+  }
 
+  this.vspromise = new FileLoader(this).load('assets/datafiles/vsource.dat', TestCallback);
+  this.fspromise = new FileLoader(this).load('assets/datafiles/fsource.dat', TestCallback);
+  
+  
   this.shadersPromise = Promise.all([this.vspromise, this.fspromise]);
-
-  console.log('all done');
 }
 
 Helix.prototype.render = function(now) {
@@ -49,8 +54,6 @@ Helix.prototype.init = function() {
   this.shadersPromise.then((values) => {
     this.vsSource = values[0];
     this.fsSource = values[1];
-    console.log('vsource: ' + this.vsSource);
-    console.log('fsource: ' + this.fsSource);
 
     // Initialize a shader program; this is where all the lighting
     // for the vertices and so forth is established.
