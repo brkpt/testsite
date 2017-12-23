@@ -1,7 +1,7 @@
-import {Helix} from './helix.js';
-
 goog.require('goog.dom')
 goog.require('Helix');
+
+import {Helix} from './helix.js';
 
 //
 // Start here
@@ -14,7 +14,7 @@ const canvas = document.querySelector('#glcanvas');
 const glContext = canvas.getContext('webgl');
 var helix = new Helix(glContext);
 
-//Load dummy file for testing purposes
+//Load dummy
 $.ajax({
   url: "assets/datafiles/data.txt"
 }).done(function(data) {

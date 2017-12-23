@@ -1,5 +1,6 @@
 goog.provide('FileLoader');
 
+// Loads a file and calls back to the caller
 function FileLoader(instance) {
     this.instance=instance;
 }
