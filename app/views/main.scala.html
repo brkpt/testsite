@@ -21,7 +21,12 @@
        * the page content. *@
       @content
 
+      Hello this text is here
+      <div id="dataout"></div>
       <script src="@routes.Assets.versioned("javascripts/jquery-3.2.1.js")" type="text/javascript"></script>
+
+      @routes.Assets.versioned("datafiles/data.txt")
+
       <script src="@routes.Assets.versioned("javascripts/closure-library/closure/goog/base.js")" type="text/javascript"></script>
       <script src="@routes.Assets.versioned("javascripts/gl-matrix.js")" type="text/javascript"></script>
       <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>

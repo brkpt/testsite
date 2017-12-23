@@ -7,81 +7,81 @@ function Helix(glContext) {
   this.gl = glContext;
   this.squareRotation = 0.0;
 
-  // Vertex shader program
-  this.vsSource = `
-    attribute vec4 aVertexPosition;
-    attribute vec4 aVertexColor;
-
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
-
-    varying lowp vec4 vColor;
-
-    void main(void) {
-      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-      vColor = aVertexColor;
-    }
-  `;
-
-  // Fragment shader program
-  this.fsSource = `
-    varying lowp vec4 vColor;
-
-    void main(void) {
-      gl_FragColor = vColor;
-    }
-  `;
-  
   // If we don't have a GL context, give up now
   if (!this.gl) {
     alert('Unable to initialize WebGL. Your browser or machine may not support it.');
     return;
   }
+
+  this.vspromise = $.ajax({
+    url: 'assets/datafiles/vsource.dat'
+  });
+
+  this.fspromise = $.ajax({
+    url: 'assets/datafiles/fsource.dat'
+  });
+
+  this.shadersPromise = Promise.all([this.vspromise, this.fspromise]);
+
+  console.log('all done');
+}
+
+Helix.prototype.render = function(now) {
+  now *= 0.001;  // convert to seconds
+  const deltaTime = now - this.then;
+  this.then = now;
+
+  this.drawScene(this.gl, this.programInfo, this.buffers, deltaTime);
+
+  window.requestAnimationFrame(helixCallbacks.render.bind(helixCallbacks));
 }
 
 Helix.prototype.init = function() {
-  // Initialize a shader program; this is where all the lighting
-  // for the vertices and so forth is established.
-  const shaderProgram = this.initShaderProgram(this.gl, this.vsSource, this.fsSource);
-
-  // Collect all the info needed to use the shader program.
-  // Look up which attributes our shader program is using
-  // for aVertexPosition, aVevrtexColor and also
-  // look up uniform locations.
-  const programInfo = {
-    program: shaderProgram,
-    attribLocations: {
-      vertexPosition: this.gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-      vertexColor: this.gl.getAttribLocation(shaderProgram, 'aVertexColor'),
-    },
-    uniformLocations: {
-      projectionMatrix: this.gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-      modelViewMatrix: this.gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
-    },
-  };
-
-  // Here's where we call the routine that builds all the
-  // objects we'll be drawing.
-  const buffers = this.initBuffers(this.gl);
-
-  this.then = 0;
-
+  // Save instance
   helixCallbacks.instance = this;
+
+  // Configure render callback
   helixCallbacks.render = function(now) {
     this.instance.render(now);
   };
+  
 
-  // Draw the scene repeatedly
-  Helix.prototype.render = function(now) {
-    now *= 0.001;  // convert to seconds
-    const deltaTime = now - this.then;
-    this.then = now;
+  this.shadersPromise.then((values) => {
+    this.vsSource = values[0];
+    this.fsSource = values[1];
+    console.log('vsource: ' + this.vsSource);
+    console.log('fsource: ' + this.fsSource);
 
-    this.drawScene(this.gl, programInfo, buffers, deltaTime);
+    // Initialize a shader program; this is where all the lighting
+    // for the vertices and so forth is established.
+    const shaderProgram = this.initShaderProgram(this.gl, this.vsSource, this.fsSource);
 
+    // Collect all the info needed to use the shader program.
+    // Look up which attributes our shader program is using
+    // for aVertexPosition, aVevrtexColor and also
+    // look up uniform locations.
+    this.programInfo = {
+      program: shaderProgram,
+      attribLocations: {
+        vertexPosition: this.gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+        vertexColor: this.gl.getAttribLocation(shaderProgram, 'aVertexColor'),
+      },
+      uniformLocations: {
+        projectionMatrix: this.gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
+        modelViewMatrix: this.gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+      },
+    };
+
+    // Here's where we call the routine that builds all the
+    // objects we'll be drawing.
+    this.buffers = this.initBuffers(this.gl);
+
+    this.then = 0;
+
+    // Trigger draw
     window.requestAnimationFrame(helixCallbacks.render.bind(helixCallbacks));
-  }
-  window.requestAnimationFrame(helixCallbacks.render.bind(helixCallbacks));
+  });  
+
 }
 
 //
@@ -138,14 +138,14 @@ Helix.prototype.initBuffers = function(gl) {
 // Draw the scene.
 //
 Helix.prototype.drawScene = function(gl, programInfo, buffers, deltaTime) {
-  this.gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
-  this.gl.clearDepth(1.0);                 // Clear everything
-  this.gl.enable(this.gl.DEPTH_TEST);           // Enable depth testing
-  this.gl.depthFunc(this.gl.LEQUAL);            // Near things obscure far things
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
+  gl.clearDepth(1.0);                 // Clear everything
+  gl.enable(this.gl.DEPTH_TEST);           // Enable depth testing
+  gl.depthFunc(this.gl.LEQUAL);            // Near things obscure far things
 
   // Clear the canvas before we start drawing on it.
 
-  this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+  gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
   // Create a perspective matrix, a special matrix that is
   // used to simulate the distortion of perspective in a camera.
@@ -155,7 +155,7 @@ Helix.prototype.drawScene = function(gl, programInfo, buffers, deltaTime) {
   // and 100 units away from the camera.
 
   const fieldOfView = 45 * Math.PI / 180;   // in radians
-  const aspect = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;
+  const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
   const zNear = 0.1;
   const zFar = 100.0;
   const projectionMatrix = mat4.create();
