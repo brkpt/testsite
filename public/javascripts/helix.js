@@ -16,18 +16,8 @@ function Helix(glContext) {
     return;
   }
 
-  // this.vspromise = $.ajax({
-  //   url: 'assets/datafiles/vsource.dat'
-  // });
-
-  function TestCallback(url, result) {
-    console.log('callback hit for ' + url);
-  }
-
-  this.vspromise = new FileLoader(this).load('assets/datafiles/vsource.dat', TestCallback);
-  this.fspromise = new FileLoader(this).load('assets/datafiles/fsource.dat', TestCallback);
-  
-  
+  this.vspromise = new FileLoader(this).load('assets/datafiles/vsource.dat');
+  this.fspromise = new FileLoader(this).load('assets/datafiles/fsource.dat');
   this.shadersPromise = Promise.all([this.vspromise, this.fspromise]);
 }
 
@@ -96,12 +86,10 @@ Helix.prototype.init = function() {
 Helix.prototype.initBuffers = function(gl) {
 
   // Create a buffer for the square's positions.
-
   const positionBuffer = gl.createBuffer();
 
   // Select the positionBuffer as the one to apply buffer
   // operations to from here out.
-
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
   // Now create an array of positions for the square.
@@ -115,11 +103,9 @@ Helix.prototype.initBuffers = function(gl) {
   // Now pass the list of positions into WebGL to build the
   // shape. We do this by creating a Float32Array from the
   // JavaScript array, then use it to fill the current buffer.
-
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
   // Now set up the colors for the vertices
-
   const colors = [
     1.0,  1.0,  1.0,  1.0,    // white
     1.0,  0.0,  0.0,  1.0,    // red
@@ -147,7 +133,6 @@ Helix.prototype.drawScene = function(gl, programInfo, buffers, deltaTime) {
   gl.depthFunc(this.gl.LEQUAL);            // Near things obscure far things
 
   // Clear the canvas before we start drawing on it.
-
   gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
   // Create a perspective matrix, a special matrix that is
@@ -156,7 +141,6 @@ Helix.prototype.drawScene = function(gl, programInfo, buffers, deltaTime) {
   // ratio that matches the display size of the canvas
   // and we only want to see objects between 0.1 units
   // and 100 units away from the camera.
-
   const fieldOfView = 45 * Math.PI / 180;   // in radians
   const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
   const zNear = 0.1;
@@ -227,11 +211,9 @@ Helix.prototype.drawScene = function(gl, programInfo, buffers, deltaTime) {
   }
 
   // Tell WebGL to use our program when drawing
-
   this.gl.useProgram(programInfo.program);
 
   // Set the shader uniforms
-
   this.gl.uniformMatrix4fv(
       programInfo.uniformLocations.projectionMatrix,
       false,
@@ -248,7 +230,6 @@ Helix.prototype.drawScene = function(gl, programInfo, buffers, deltaTime) {
   }
 
   // Update the rotation for the next draw
-
   this.squareRotation += deltaTime;
 }
 
@@ -260,14 +241,12 @@ Helix.prototype.initShaderProgram = function(gl, vsSource, fsSource) {
   const fragmentShader = this.loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
 
   // Create the shader program
-
   const shaderProgram = gl.createProgram();
   gl.attachShader(shaderProgram, vertexShader);
   gl.attachShader(shaderProgram, fragmentShader);
   gl.linkProgram(shaderProgram);
 
   // If creating the shader program failed, alert
-
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
     alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
     return null;

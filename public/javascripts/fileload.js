@@ -13,7 +13,9 @@ FileLoader.prototype.load = function(url, callback) {
     });
     
     loadPromise.then(function(result) {
-        callback(this.url, result).bind(this.instance);
+        if(callback) {
+            callback(this.url, result).bind(this.instance);
+        }
     }.bind(this),function(reason) {
         console.log(url + 'rejected: ' + reason)
     });
