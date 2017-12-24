@@ -12,6 +12,8 @@ function Shape() {
 }
 
 // ****************************************************************************
+// Loads shader files from remote server and creates the shader program 
+// from them.
 // ****************************************************************************
 Shape.prototype.load = function(gl, completedFunc) {
     this.vspromise = new FileLoader(this).load('assets/datafiles/vsource.dat');
@@ -193,7 +195,6 @@ Shape.prototype.createProgram = function(gl, vsSource, fsSource) {
     gl.compileShader(shader);
   
     // See if it compiled successfully
-  
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
       alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
       gl.deleteShader(shader);

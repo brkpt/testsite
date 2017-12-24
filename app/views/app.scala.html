@@ -1,0 +1,26 @@
+@()
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script type="text/javascript" src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular.min.js"></script>
+  <head>
+  </head>
+</head>
+<body>
+  <h1>Sample Application</h1>
+
+  <div ng-app = "" ng-init = "countries = [{locale:'en-US',name:'United States'}, {locale:'en-GB',name:'United Kingdom'}, {locale:'en-FR',name:'France'}]">
+    <p>Enter your Name: <input type = "text" ng-model = "name"></p>
+    <p>Hello <span ng-bind = "name"></span>!</p>
+    <p>List of Countries with locale:</p>
+
+    <ol>
+      <li ng-repeat = "country in countries">
+        {{ 'Country: ' + country.name + ', Locale: ' + country.locale }}
+      </li>
+    </ol>
+  </div>
+</body>
+</html>
